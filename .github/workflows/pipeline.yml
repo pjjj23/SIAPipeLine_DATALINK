@@ -1,0 +1,45 @@
+name: CI/CD Pipeline for SIAPipeLine_DATALINK
+
+trigger:
+  branches:
+    include:
+      - main
+
+variables:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub token for authentication
+
+stages:
+  - Initialize
+  - Build
+  - Commit and Push
+
+steps:
+  # Step 1: Initialize Repository
+  - stage: Initialize
+    name: Initialize Git Repository
+    image: alpine/git:latest
+    commands:
+      - echo "Initializing repository..."
+      - git init
+      - echo "# SIAPipeLine_DATALINK" >> README.md
+
+  # Step 2: Build Step (optional if needed for your project)
+  - stage: Build
+    name: Build Project
+    image: node:16
+    commands:
+      - echo "Installing dependencies..."
+      - npm install # Change this if your project uses a different package manager
+
+  # Step 3: Commit and Push
+  - stage: Commit and Push
+    name: Commit and Push to GitHub
+    image: alpine/git:latest
+    commands:
+      - git config --global user.email "your-email@example.com" # Replace with your email
+      - git config --global user.name "Your Name"              # Replace with your name
+      - git add .
+      - git commit -m "Automated commit from pipeline"
+      - git branch -M main
+      - git remote add origin https://github.com/pjjj23/SIAPipeLine_DATALINK.git
+      - git push -u https://${{ secrets.GITHUB_TOKEN }}@github.com/pjjj23/SIAPipeLine_DATALINK.git main
