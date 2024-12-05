@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #050505;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        header {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #headerCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+        }
+
+        #headerCanvas:active {
+            cursor: grabbing;
+        }
+
+        .back-button-top {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: 1px solid #00ff00;
+            z-index: 100;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 14px;
+        }
+
+        .back-button-top:hover {
+            background-color: rgba(0, 255, 0, 0.4);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5rem;
+            text-align: center;
+            text-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00;
+            opacity: 0;
+            z-index: 10;
+            position: relative;
+            color: #fff;
+        }
+
+        .content {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            text-align: justify;
+            font-size: 1.1rem;
+        }
+
+        .team-images {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 4rem;
+        }
+
+        .team-image {
+            width: 200px;
+            height: 200px;
+            margin: 20px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            perspective: 1000px;
+        }
+
+        .team-image-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .team-image:hover .team-image-inner {
+            transform: rotateY(180deg);
+        }
+
+        .team-image-front, .team-image-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .team-image-back {
+            background-color: #00ff00;
+            color: #000;
+            transform: rotateY(180deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .team-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.3s ease;
+        }
+
+        .team-image::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 2px solid #00ff00;
+            border-radius: 15px;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .team-image:hover::before {
+            opacity: 1;
+            top: -15px;
+            left: -15px;
+            right: -15px;
+            bottom: -15px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            max-width: 80%;
+            max-height: 80%;
+            border: 3px solid #00ff00;
+            border-radius: 10px;
+            box-shadow: 0 0 50px rgba(0, 255, 0, 0.5);
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #00ff00;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close:hover {
+            color: #fff;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .back-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            opacity: 0;
+            transition: all 0.3s ease;
+            border: 1px solid #00ff00;
+        }
+
+        .back-button:hover {
+            background-color: rgba(0, 255, 0, 0.4);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3rem;
+            }
+
+            .team-image {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#" class="back-button-top" onclick="goBack()">Back</a>
+    <header>
+        <canvas id="headerCanvas"></canvas>
+        <h1>The DATALINK team</h1>
+    </header>
+    <div class="content">
+        <p>We are a team of dedicated students at CTU Argao, working on an innovative capstone project that aims to revolutionize the way students find and apply for boarding houses. Our web-based system will serve as a centralized platform, connecting students with accredited boarding houses in the area.</p>
+        <p>By leveraging modern technology and user-friendly design, our website will streamline the application process, allowing students to easily browse, compare, and apply for boarding houses online. This efficient system not only benefits students by simplifying their search but also provides peace of mind to boarding house owners. With our platform handling the marketing and application process, owners can focus on maintaining quality accommodations while reaching a wider audience of potential tenants.</p>
+        <div class="team-images">
+            <div class="team-image" onclick="openModal(this)">
+                <div class="team-image-inner">
+                    <div class="team-image-front">
+                        <img src="img/pj.png" alt="Agent 1">
+                    </div>
+                    <div class="team-image-back">Agent PJ</div>
+                </div>
+            </div>
+            <div class="team-image" onclick="openModal(this)">
+                <div class="team-image-inner">
+                    <div class="team-image-front">
+                        <img src="img/abad.png" alt="Agent 2">
+                    </div>
+                    <div class="team-image-back">Agent Abad</div>
+                </div>
+            </div>
+            <div class="team-image" onclick="openModal(this)">
+                <div class="team-image-inner">
+                    <div class="team-image-front">
+                        <img src="img/jessel.png" alt="Agent 3">
+                    </div>
+                    <div class="team-image-back">Agent Jessel</div>
+                </div>
+            </div>
+            <div class="team-image" onclick="openModal(this)">
+                <div class="team-image-inner">
+                    <div class="team-image-front">
+                        <img src="img/rocelyn.png" alt="Agent 4">
+                    </div>
+                    <div class="team-image-back">Agent Rocelyn</div>
+                </div>
+            </div>
+            <div class="team-image" onclick="openModal(this)">
+                <div class="team-image-inner">
+                    <div class="team-image-front">
+                        <img src="img/sarah.png" alt="Agent 5">
+                    </div>
+                    <div class="team-image-back">Agent Sarah</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+    <a href="#" class="back-button" onclick="scrollToTop()">Back to Top</a>
+
+    <script>
+        // Three.js background
+        let scene, camera, renderer, particles;
+        let mouseX = 0, mouseY = 0;
+        let windowHalfX = window.innerWidth / 2;
+        let windowHalfY = window.innerHeight / 2;
+
+        function initThree() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('headerCanvas'), alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            const geometry = new THREE.BufferGeometry();
+            const vertices = [];
+
+            for (let i = 0; i < 10000; i++) {
+                const x = (Math.random() - 0.5) * 2000;
+                const y = (Math.random() - 0.5) * 2000;
+                const z = (Math.random() - 0.5) * 2000;
+                vertices.push(x, y, z);
+            }
+
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+
+            const material = new THREE.PointsMaterial({ color: 0x00ff00, size: 2 });
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+
+            camera.position.z = 1000;
+
+            document.addEventListener('mousemove', onDocumentMouseMove);
+            document.addEventListener('touchstart', onDocumentTouchStart);
+            document.addEventListener('touchmove', onDocumentTouchMove);
+
+            animate();
+        }
+
+        function onDocumentMouseMove(event) {
+            mouseX = (event.clientX - windowHalfX) * 0.05;
+            mouseY = (event.clientY - windowHalfY) * 0.05;
+        }
+
+        function onDocumentTouchStart(event) {
+            if (event.touches.length === 1) {
+                event.preventDefault();
+                mouseX = event.touches[0].pageX - windowHalfX;
+                mouseY = event.touches[0].pageY - windowHalfY;
+            }
+        }
+
+        function onDocumentTouchMove(event) {
+            if (event.touches.length === 1) {
+                event.preventDefault();
+                mouseX = event.touches[0].pageX - windowHalfX;
+                mouseY = event.touches[0].pageY - windowHalfY;
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            camera.position.x += (mouseX - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY - camera.position.y) * 0.05;
+            camera.lookAt(scene.position);
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            windowHalfX = window.innerWidth / 2;
+            windowHalfY = window.innerHeight / 2;
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        initThree();
+
+        // GSAP Animations
+        gsap.from("h1", {opacity: 1, y: 50, duration: 500, ease: "power3.out"});
+        gsap.from(".content p", {opacity: 0, y: 30, duration: 1, stagger: 0.5, ease: "power2.out"}); 
+
+        function openModal(img) {
+            var modal = document.getElementById("imageModal");
+            var modalImg = document.getElementById("modalImage");
+            modal.style.display = "flex";
+            modalImg.src = img.querySelector('img').src;
+            gsap.from(modalImg, {scale: 0, duration: 0.5, ease: "back.out(1.7)"});
+        }
+
+        function closeModal() {
+            gsap.to("#imageModal", {opacity: 0, duration: 0.3, ease: "power2.inOut", onComplete: () => {
+                document.getElementById("imageModal").style.display = "none";
+                document.getElementById("imageModal").style.opacity = 1;
+            }});
+        }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById("imageModal")) {
+                closeModal();
+            }
+        }
+        function goBack() {
+            window.location.href="home.html"
+        }
+
+        window.onscroll = function() {
+            var backButton = document.querySelector('.back-button');
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                backButton.style.opacity = "1";
+            } else {
+                backButton.style.opacity = "0";
+            }
+        };
+
+        function scrollToTop() {
+            gsap.to(window, {duration: 1, scrollTo: 0, ease: "power2.inOut"});
+        }
+
+        // Floating animation for team images
+        gsap.to(".team-image", {
+            y: "random(-10, 10)",
+            x: "random(-10, 10)",
+            rotation: "random(-5, 5)",
+            duration: 3,
+            ease: "sine.inOut",
+            repeat: -1,
+            yoyo: true,
+            stagger: {
+                each: 0.2,
+                from: "random"
+            }
+        });
+    </script>
+</body>
+</html>
